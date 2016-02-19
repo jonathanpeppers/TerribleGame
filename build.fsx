@@ -9,6 +9,11 @@ let Exec command args =
     let result = Shell.Exec(command, args)
     if result <> 0 then failwithf "%s exited with error %d" command result
 
+Target "clean" (fun () ->
+    DeleteDir "build"
+    DeleteDir "scratch"
+)
+
 Target "android" (fun () ->
     Exec "/Applications/Unity/Unity.app/Contents/MacOS/Unity" "-quit -batchmode -logFile -executeMethod BuildScript.Android"
 )
@@ -18,9 +23,13 @@ Target "ios-player" (fun () ->
 )
 
 Target "ios" (fun () ->
+    DeleteFile "scratch/TerribleGame.ipa"
     DeleteDir "scratch/TerribleGame.xarchive/"
     Exec "xcodebuild" ("-project scratch/Unity-iPhone.xcodeproj -scheme Unity-iPhone archive -archivePath scratch/TerribleGame PROVISIONING_PROFILE=" + provisioningId)
     Exec "xcodebuild" ("-exportArchive -archivePath scratch/TerribleGame.xcarchive -exportPath build/TerribleGame.ipa -exportProvisioningProfile " + provisioningName)
 )
+
+"clean" ==> "android"
+"clean" ==> "ios-player"
 
 RunTarget()
