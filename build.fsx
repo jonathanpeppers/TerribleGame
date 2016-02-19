@@ -10,7 +10,7 @@ let Exec command args =
     if result <> 0 then failwithf "%s exited with error %d" command result
     
 let UnityPath =
-    if isUnix then "/Applications/Unity/Unity.app/Contents/MacOS/Unity" else @"C:\Program Files (x86)\Unity\Editor\Unity.exe"
+    if isUnix then "/Applications/Unity/Unity.app/Contents/MacOS/Unity" else @"C:\Program Files\Unity\Editor\Unity.exe"
 
 Target "clean" (fun () ->
     DeleteDir "build"
