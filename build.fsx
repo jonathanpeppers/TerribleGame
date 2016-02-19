@@ -12,17 +12,21 @@ let Exec command args =
 let UnityPath =
     if isUnix then "/Applications/Unity/Unity.app/Contents/MacOS/Unity" else @"C:\Program Files\Unity\Editor\Unity.exe"
 
+let Unity args =
+    let result = Shell.Exec(UnityPath, args)
+    if result < 0 then failwithf "Unity exited with error %d" result
+
 Target "clean" (fun () ->
     DeleteDir "build"
     DeleteDir "scratch"
 )
 
 Target "android" (fun () ->
-    Exec UnityPath "-quit -batchmode -logFile -executeMethod BuildScript.Android"
+    Unity "-quit -batchmode -logFile -executeMethod BuildScript.Android"
 )
 
 Target "ios-player" (fun () ->
-    Exec UnityPath "-quit -batchmode -logFile -executeMethod BuildScript.iOS"
+    Unity "-quit -batchmode -logFile -executeMethod BuildScript.iOS"
 )
 
 Target "ios" (fun () ->
