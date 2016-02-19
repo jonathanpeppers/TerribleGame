@@ -8,6 +8,9 @@ let provisioningName = "GenericInHouse"
 let Exec command args =
     let result = Shell.Exec(command, args)
     if result <> 0 then failwithf "%s exited with error %d" command result
+    
+let UnityPath =
+    if isUnix then "/Applications/Unity/Unity.app/Contents/MacOS/Unity" else @"C:\Program Files (x86)\Unity\Editor\Unity.exe"
 
 Target "clean" (fun () ->
     DeleteDir "build"
@@ -15,15 +18,15 @@ Target "clean" (fun () ->
 )
 
 Target "android" (fun () ->
-    Exec "/Applications/Unity/Unity.app/Contents/MacOS/Unity" "-quit -batchmode -logFile -executeMethod BuildScript.Android"
+    Exec UnityPath "-quit -batchmode -logFile -executeMethod BuildScript.Android"
 )
 
 Target "ios-player" (fun () ->
-    Exec "/Applications/Unity/Unity.app/Contents/MacOS/Unity" "-quit -batchmode -logFile -executeMethod BuildScript.iOS"
+    Exec UnityPath "-quit -batchmode -logFile -executeMethod BuildScript.iOS"
 )
 
 Target "ios" (fun () ->
-    DeleteFile "scratch/TerribleGame.ipa"
+    DeleteFile "build/TerribleGame.ipa"
     DeleteDir "scratch/TerribleGame.xarchive/"
     Exec "xcodebuild" ("-project scratch/Unity-iPhone.xcodeproj -scheme Unity-iPhone archive -archivePath scratch/TerribleGame PROVISIONING_PROFILE=" + provisioningId)
     Exec "xcodebuild" ("-exportArchive -archivePath scratch/TerribleGame.xcarchive -exportPath build/TerribleGame.ipa -exportProvisioningProfile " + provisioningName)
